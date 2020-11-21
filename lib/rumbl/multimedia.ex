@@ -2,16 +2,22 @@ defmodule Rumbl.Multimedia do
   import Ecto.Query, warn: false
 
   alias Rumbl.Repo
-  alias Rumbl.Multimedia.Video
+  alias Rumbl.Multimedia.{Video, Category}
   alias Rumbl.Accounts
-  alias Rumbl.Multimedia.Category
+
+  def list_videos do
+    Video
+    |> Repo.all()
+  end
 
   def create_category!(name) do
     Repo.insert!(%Category{name: name}, on_conflict: :nothing)
   end
 
-  def list_videos do
-    Repo.all(Video)
+  def list_alphabetical_categories do
+    Category
+    |> Category.alphabetical()
+    |> Repo.all()
   end
 
   def list_user_videos(%Accounts.User{} = user) do
@@ -26,11 +32,11 @@ defmodule Rumbl.Multimedia do
     |> Repo.get!(id)
   end
 
+  def get_video!(id), do: Repo.get!(Video, id)
+
   defp user_videos_query(query, %Accounts.User{id: user_id}) do
     from(v in query, where: v.user_id == ^user_id)
   end
-
-  def get_video!(id), do: Repo.get!(Video, id)
 
   def update_video(%Video{} = video, attrs) do
     video
@@ -53,9 +59,21 @@ defmodule Rumbl.Multimedia do
     Video.changeset(video, %{})
   end
 
-  def list_alphabetical_categories do
-    Category
-    |> Category.alphabetical()
-    |> Repo.all()
+  alias Rumbl.Multimedia.Annotation
+
+  def annotate_video(%Accounts.User{id: user_id}, video_id, attrs) do
+    %Annotation{video_id: video_id, user_id: user_id}
+    |> Annotation.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def list_annotations(%Video{} = video, since_id \\ 0) do
+    Repo.all(
+      from a in Ecto.assoc(video, :annotations),
+        where: a.id > ^since_id,
+        order_by: [asc: a.at, asc: a.id],
+        limit: 500,
+        preload: [:user]
+    )
   end
 end

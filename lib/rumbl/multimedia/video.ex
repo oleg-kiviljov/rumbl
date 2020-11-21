@@ -2,6 +2,8 @@ defmodule Rumbl.Multimedia.Video do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, Rumbl.Multimedia.Permalink, autogenerate: true}
+
   schema "videos" do
     field :url, :string
     field :description, :string
@@ -9,6 +11,7 @@ defmodule Rumbl.Multimedia.Video do
     field :slug, :string
     belongs_to :user, Rumbl.Accounts.User
     belongs_to :category, Rumbl.Multimedia.Category
+    has_many :annotations, Rumbl.Multimedia.Annotation
 
     timestamps()
   end

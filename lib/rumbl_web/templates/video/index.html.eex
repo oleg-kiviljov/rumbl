@@ -5,18 +5,16 @@
     <tr>
       <th>Title</th>
       <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
 <%= for video <- @videos do %>
     <tr>
-      <td><%= video.url %></td>
+      <td><%= video.title %></td>
       <td>
-        <span><%= link "Watch", to: Routes.watch_path(@conn, :show, video), class: "button" %></span>
-        <span><%= link "Edit", to: Routes.video_path(@conn, :edit, video) %></span>
-        <span><%= link "Delete", to: Routes.video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <%= link "Watch", to: Routes.watch_path(@conn, :show, video), class: "button" %>
+        <%= link "Edit", to: Routes.video_path(@conn, :edit, video), class: "button" %>
+        <%= link "Delete", to: Routes.video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "button" %>
       </td>
     </tr>
 <% end %>
