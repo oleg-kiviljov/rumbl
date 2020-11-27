@@ -74,3 +74,11 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+wolfram_app_id =
+  System.get_env("WOLFRAM_APP_ID") ||
+    raise """
+      environment variable WOLFRAM_APP_ID is missing.
+    """
+
+config :rumbl, :wolfram, app_id: wolfram_app_id
